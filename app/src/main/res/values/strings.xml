@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Github User</string>
+    <string name="repository">Repository</string>
+    <string name="company">Company</string>
+    <string name="location">Location</string>
+    <string name="following">Following</string>
+    <string name="follower">Follower</string>
+    <string name="image">image</string>
+    <string name="set_language">Set Language</string>
+    <string name="main_action_bar_tile">Github User\'s Search</string>
+    <string name="detail_action_bar_title">Detail User</string>
+    <string name="search_user">Search by username</string>
+    <string name="search">Search</string>
+    <string name="emptyField">Fill this field properly</string>
+    <string name="user_image">User Image</string>
+    <string name="favorite">Favorite</string>
+</resources>
