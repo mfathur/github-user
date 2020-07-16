@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mfathurz.githubuser.R
+import com.mfathurz.githubuser.UserActivity
 import com.mfathurz.githubuser.ui.detail.main.DetailActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -64,9 +65,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.nav_setting){
-            val mIntent = Intent(Settings.ACTION_LOCALE_SETTINGS)
-            startActivity(mIntent)
+        when(item.itemId){
+            R.id.nav_setting -> {
+                val mIntent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(mIntent)
+            }
+
+            R.id.nav_favorite -> {
+                val mIntent = Intent(this,UserActivity::class.java)
+                startActivity(mIntent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

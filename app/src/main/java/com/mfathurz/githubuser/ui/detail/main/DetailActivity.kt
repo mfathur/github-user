@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_detail.*
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var detailViewModel: DetailViewModel
+    private var statusFavorite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +35,14 @@ class DetailActivity : AppCompatActivity() {
             viewInit(it)
             showLoading(false)
         })
+
+        fab_add_favorite.setOnClickListener {
+            statusFavorite = !statusFavorite
+            setStatusFavorite(statusFavorite)
+        }
     }
 
-    private fun viewPagerInit(user : String){
+    private fun viewPagerInit(user: String) {
         val mBundle = Bundle()
         mBundle.putString(EXTRA_USERNAME, user)
 
@@ -76,5 +82,12 @@ class DetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_USERNAME = "extra_username"
+    }
+
+    private fun setStatusFavorite(statusFavorite: Boolean) {
+        if (statusFavorite)
+            fab_add_favorite.setImageResource(R.drawable.ic_favorite)
+        else
+            fab_add_favorite.setImageResource(R.drawable.ic_favorite_border)
     }
 }

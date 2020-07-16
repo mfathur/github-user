@@ -7,7 +7,6 @@
     <permission
         android:name="com.mfathurz.githubuser.READ_DATABASE"
         android:protectionLevel="normal" />
-
     <permission
         android:name="com.mfathurz.githubuser.WRITE_DATABASE"
         android:protectionLevel="normal" />
@@ -19,9 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".UserActivity"></activity>
 
         <provider
-            android:name=".provider.FavoriteUserProvider"
+            android:name=".provider.FavUserProvider"
             android:authorities="com.mfathurz.githubuser"
             android:enabled="true"
             android:exported="true"
