@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mfathurz.githubuser.R
-import com.mfathurz.githubuser.UserActivity
+import com.mfathurz.githubuser.ui.favorite.FavoriteUserActivity
 import com.mfathurz.githubuser.ui.detail.main.DetailActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
         recyclerAdapter.setOnItemClickedCallback(object : UserRecyclerAdapter.OnItemClickCallback {
             override fun onItemClicked(username: String) {
                 val mIntent = Intent(this@MainActivity, DetailActivity::class.java)
@@ -72,7 +71,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.nav_favorite -> {
-                val mIntent = Intent(this,UserActivity::class.java)
+                val mIntent = Intent(this,
+                    FavoriteUserActivity::class.java)
                 startActivity(mIntent)
             }
         }

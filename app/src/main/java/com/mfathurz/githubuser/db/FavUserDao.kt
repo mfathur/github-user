@@ -1,9 +1,9 @@
 package com.mfathurz.githubuser.db
 
-import android.content.ContentValues
 import android.database.Cursor
 import androidx.room.*
-import com.mfathurz.githubuser.Constant.TABLE_NAME
+import com.mfathurz.githubuser.db.Contract.TABLE_NAME
+import com.mfathurz.githubuser.model.User
 
 @Dao
 interface FavUserDao {
@@ -11,8 +11,12 @@ interface FavUserDao {
     fun getAllFavUser(): Cursor?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFavUser(values : ContentValues): Int
+    suspend fun insertFavUser(user: User)
 
     @Delete
-    fun deleteFavUserById(id: Int): Int
+    suspend fun deleteFavUser(user: User)
+
+    @Query("DELETE FROM $TABLE_NAME")
+    suspend fun deleteAllFavUser()
+
 }

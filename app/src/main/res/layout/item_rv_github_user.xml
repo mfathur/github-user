@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/item_img_user"
@@ -30,7 +31,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/item_img_user"
-        app:layout_constraintTop_toTopOf="@id/item_img_user"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

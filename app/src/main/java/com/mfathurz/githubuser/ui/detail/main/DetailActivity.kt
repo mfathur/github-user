@@ -8,19 +8,29 @@ import androidx.lifecycle.ViewModelProvider
 import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.mfathurz.githubuser.R
+import com.mfathurz.githubuser.Repository
+import com.mfathurz.githubuser.db.FavUserDatabase
 import com.mfathurz.githubuser.model.User
 import com.mfathurz.githubuser.ui.detail.FollowPagerAdapter
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var detailViewModel: DetailViewModel
     private var statusFavorite = false
+    private lateinit var favoriteUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+
+        val repo = Repository(FavUserDatabase.invoke(this).getFavUserDao())
+        val viewModelFactory = DetailViewModelFactory(repo)
+        detailViewModel = ViewModelProvider(this,viewModelFactory).get(DetailViewModel::class.java)
+
         supportActionBar?.let {
             it.title = getString(R.string.detail_action_bar_title)
             it.setDisplayHomeAsUpEnabled(true)
@@ -32,11 +42,14 @@ class DetailActivity : AppCompatActivity() {
 
         detailViewModel.detailUser(user)
         detailViewModel.getUser().observe(this, Observer {
+            favoriteUser = it
             viewInit(it)
             showLoading(false)
         })
 
         fab_add_favorite.setOnClickListener {
+            detailViewModel.insertFavUser(repo,favoriteUser)
+
             statusFavorite = !statusFavorite
             setStatusFavorite(statusFavorite)
         }
@@ -45,7 +58,6 @@ class DetailActivity : AppCompatActivity() {
     private fun viewPagerInit(user: String) {
         val mBundle = Bundle()
         mBundle.putString(EXTRA_USERNAME, user)
-
 
         val followPagerAdapter = FollowPagerAdapter(this, supportFragmentManager)
         followPagerAdapter.setData(mBundle)
@@ -85,9 +97,9 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun setStatusFavorite(statusFavorite: Boolean) {
-        if (statusFavorite)
+        if (statusFavorite) {
             fab_add_favorite.setImageResource(R.drawable.ic_favorite)
-        else
+        } else
             fab_add_favorite.setImageResource(R.drawable.ic_favorite_border)
     }
 }

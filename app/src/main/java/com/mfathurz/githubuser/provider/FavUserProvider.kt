@@ -5,10 +5,8 @@ import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import androidx.core.net.toUri
-import com.mfathurz.githubuser.Constant.AUTHORITY
-import com.mfathurz.githubuser.Constant.CONTENT_URI
-import com.mfathurz.githubuser.Constant.TABLE_NAME
+import com.mfathurz.githubuser.db.Contract.AUTHORITY
+import com.mfathurz.githubuser.db.Contract.TABLE_NAME
 import com.mfathurz.githubuser.db.FavUserDao
 import com.mfathurz.githubuser.db.FavUserDatabase
 
@@ -28,25 +26,13 @@ class FavUserProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-        val deleteFavUser = when (FAV_USER_ID) {
-            sUriMatcher.match(uri) -> getFavUserDao.deleteFavUserById(uri.lastPathSegment!!.toInt())
-            else -> 0
-        }
-
-        context?.contentResolver?.notifyChange(CONTENT_URI, null)
-        return deleteFavUser
+        throw UnsupportedOperationException()
     }
 
     override fun getType(uri: Uri): String? = null
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        val insertFavUser = when(FAV_USER){
-            sUriMatcher.match(uri) -> getFavUserDao.insertFavUser(values as ContentValues)
-            else -> 0
-        }
-        context?.contentResolver?.notifyChange(CONTENT_URI,null)
-
-        return "$CONTENT_URI/$insertFavUser".toUri()
+        throw UnsupportedOperationException()
     }
 
     override fun onCreate(): Boolean = true

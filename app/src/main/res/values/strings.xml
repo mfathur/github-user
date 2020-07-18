@@ -15,4 +15,10 @@
     <string name="user_image">User Image</string>
     <string name="favorite">Favorite</string>
     <string name="fav_user">Favorite User</string>
+    <string name="delete_all">Delete all</string>
+    <string name="alert_delete_all">Delete all favorite users</string>
+    <string name="alert_delete_one">Delete this user from favorite</string>
+    <string name="alert_title">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

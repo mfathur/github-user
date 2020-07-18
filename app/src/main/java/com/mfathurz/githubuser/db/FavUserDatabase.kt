@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.mfathurz.githubuser.model.FavoriteUser
+import com.mfathurz.githubuser.model.User
 
 @Database(
-    entities = [FavoriteUser::class],
-    version = 1
+    entities = [User::class],
+    version = 1,
+    exportSchema = false
 )
 abstract class FavUserDatabase : RoomDatabase() {
 
@@ -28,7 +29,7 @@ abstract class FavUserDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) = Room.databaseBuilder(
             context.applicationContext,
             FavUserDatabase::class.java,
-            "fav_user_database"
+            "favorite_user_database"
         ).build()
     }
 }

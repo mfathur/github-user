@@ -6,11 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.TextHttpResponseHandler
+import com.mfathurz.githubuser.Repository
 import com.mfathurz.githubuser.model.User
 import cz.msebera.android.httpclient.Header
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(repo: Repository) : ViewModel() {
 
     val user = MutableLiveData<User>()
 
@@ -58,7 +62,11 @@ class DetailViewModel : ViewModel() {
         return user
     }
 
-    companion object{
+    fun insertFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch{
+        repo.insertFavUser(favoriteUser)
+    }
+
+    companion object {
         const val DETAIL_USER_URL = "https://api.github.com/users/"
     }
 }
