@@ -2,7 +2,6 @@ package com.mfathurz.githubuser.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,8 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mfathurz.githubuser.R
+import com.mfathurz.githubuser.ui.setting.PreferenceFragment
 import com.mfathurz.githubuser.ui.favorite.FavoriteUserActivity
 import com.mfathurz.githubuser.ui.detail.main.DetailActivity
+import com.mfathurz.githubuser.ui.setting.SettingActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -66,7 +67,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_setting -> {
-                val mIntent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                val mIntent = Intent(this,
+                    SettingActivity::class.java)
                 startActivity(mIntent)
             }
 
