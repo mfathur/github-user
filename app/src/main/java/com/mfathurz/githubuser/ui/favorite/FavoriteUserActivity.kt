@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -13,10 +12,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mfathurz.githubuser.R
 import com.mfathurz.githubuser.Repository
+import com.mfathurz.githubuser.db.Contract.CONTENT_URI
 import com.mfathurz.githubuser.db.FavUserDatabase
 import com.mfathurz.githubuser.model.User
+import com.mfathurz.githubuser.ui.detail.main.DetailActivity
 import com.mfathurz.githubuser.ui.main.MainActivity
+import com.mfathurz.githubuser.util.MappingHelper
 import kotlinx.android.synthetic.main.activity_favorite_user.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class FavoriteUserActivity : AppCompatActivity() {
 
@@ -47,7 +54,6 @@ class FavoriteUserActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        showLoading(true)
         favUserRecyclerView.setHasFixedSize(true)
         favUserRecyclerView.layoutManager = LinearLayoutManager(this)
         favUserRecyclerView.adapter = adapter
@@ -59,8 +65,9 @@ class FavoriteUserActivity : AppCompatActivity() {
 
         adapter.setOnItemClickCallback(object : FavoriteRecyclerAdapter.OnItemClickCallback {
             override fun onItemClicked(favoriteUser: User) {
-                Toast.makeText(this@FavoriteUserActivity, favoriteUser.name, Toast.LENGTH_SHORT)
-                    .show()
+                val mIntent = Intent(this@FavoriteUserActivity,DetailActivity::class.java)
+                mIntent.putExtra(DetailActivity.EXTRA_USERNAME,favoriteUser.username)
+                startActivity(mIntent)
             }
         })
 
@@ -79,14 +86,29 @@ class FavoriteUserActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_delete_all -> showAlertDialog(ALERT_DIALOG_DELETE_ALL)
             android.R.id.home -> {
-                val mIntent = Intent(this,MainActivity::class.java)
+                val mIntent = Intent(this, MainActivity::class.java)
                 startActivity(mIntent)
             }
         }
         return true
+    }
+
+    private fun loadFavoriteAsync() {
+        CoroutineScope(Main).launch {
+            showLoading(true)
+
+            val deferredFavorite = async(IO) {
+                val cursor = contentResolver?.query(CONTENT_URI, null, null, null, null)
+                MappingHelper.mapCursorToList(cursor)
+            }
+
+            val notes = deferredFavorite.await()
+            adapter.submitList(notes)
+            showLoading(false)
+        }
     }
 
     private fun showAlertDialog(type: Int) {
@@ -102,7 +124,7 @@ class FavoriteUserActivity : AppCompatActivity() {
         dialog.setTitle(getString(R.string.alert_title))
         dialog.setMessage(message)
         dialog.setPositiveButton(getString(R.string.yes)) { _, _ ->
-            if (isDeleteAll){
+            if (isDeleteAll) {
                 favoriteViewModel.deleteAllFavUser(repository)
             } else {
                 favoriteViewModel.deleteFavUser(repository, favoriteUserSelected!!)

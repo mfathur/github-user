@@ -21,7 +21,8 @@
     <string name="alert_title">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="reminder">Reminder at 09.00 AM</string>
+    <string name="reminder_at_9">Reminder at 09.00 AM</string>
+    <string name="reminder">Reminder</string>
     <string name="select_language">Select language</string>
     <string name="english">English</string>
     <string name="key_language">language</string>

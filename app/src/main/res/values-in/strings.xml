@@ -14,4 +14,20 @@
     <string name="emptyField">Tidak boleh kosong</string>
     <string name="search">Cari</string>
     <string name="user_image">Gambar Pengguna</string>
+    <string name="favorite">Favorit</string>
+    <string name="fav_user">Favorit Pengguna</string>
+    <string name="delete_all">Hapus semua</string>
+    <string name="alert_delete_all">Hapus semua pengguna favorit</string>
+    <string name="alert_delete_one">Delete this user from favorite</string>
+    <string name="alert_title">Apa anda yakin?</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="reminder_at_9">Pengingat pada pukul 09.00 AM</string>
+    <string name="reminder">Pengingat</string>
+    <string name="select_language">Pilih Bahasa</string>
+    <string name="english">Inggris</string>
+    <string name="key_language">Bahasa</string>
+    <string name="setting">Pengaturan</string>
+    <string name="key_reminder">reminder</string>
+    <string name="find_popular_user">Cari Pengguna favorit kamu di github yuk!</string>
 </resources>

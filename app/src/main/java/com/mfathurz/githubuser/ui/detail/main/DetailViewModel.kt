@@ -4,58 +4,86 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.TextHttpResponseHandler
+import com.mfathurz.githubuser.BuildConfig
 import com.mfathurz.githubuser.Repository
 import com.mfathurz.githubuser.model.User
+import com.mfathurz.githubuser.util.MappingHelper
 import cz.msebera.android.httpclient.Header
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class DetailViewModel(repo: Repository) : ViewModel() {
 
     val user = MutableLiveData<User>()
+    val isFavoriteUser = MutableLiveData<Boolean>()
 
-    fun detailUser(username: String) {
-        val url = DETAIL_USER_URL + username
-        val client = AsyncHttpClient()
-        client.addHeader("Authorization", "token bf6977231c3014d7d6b3dacbe474feda71b24618")
-        client.addHeader("User-Agent", "request")
-        client.get(url, object : TextHttpResponseHandler() {
+    private fun checkIfFavoriteUser(repo: Repository, username: String) : Boolean {
+        var isFavorite = false
+        viewModelScope.launch {
+            val deferredFavorite = CoroutineScope(IO).async {
+                val cursor = repo.getAllFavoriteUser()
+                MappingHelper.mapCursorToList(cursor)
+            }
+            val favoriteUsers = deferredFavorite.await()
 
-            override fun onSuccess(
-                statusCode: Int,
-                headers: Array<out Header>?,
-                responseString: String?
-            ) {
-
-                try {
-                    val obj = JSONObject(responseString as String)
-                    val avatar = obj.getString("avatar_url")
-                    val company = obj.getString("company")
-                    val name = obj.getString("name")
-                    val location = obj.getString("location")
-                    val repository = obj.getInt("public_repos")
-                    val userLogin = obj.getString("login")
-
-                    val userInfo = User(avatar, company, location, name, repository, userLogin)
-                    user.postValue(userInfo)
-                } catch (e: Exception) {
-                    Log.d("Exception", e.message as String)
+            for (i in favoriteUsers.indices){
+                if (username == favoriteUsers[i].username){
+                    isFavorite = true
+                    user.postValue(favoriteUsers[i])
+                    isFavoriteUser.postValue(true)
+                    break
                 }
             }
+        }
+        return isFavorite
+    }
 
-            override fun onFailure(
-                statusCode: Int,
-                headers: Array<out Header>?,
-                responseString: String?,
-                throwable: Throwable?
-            ) {
-                Log.d("onFailure", throwable?.message.toString())
-            }
-        })
+    fun detailUser(repo: Repository,username: String) {
+        if (!checkIfFavoriteUser(repo,username)){
+            val url = DETAIL_USER_URL + username
+            val client = AsyncHttpClient()
+            client.addHeader("Authorization", "token ${BuildConfig.API_KEY}")
+            client.addHeader("User-Agent", "request")
+            client.get(url, object : TextHttpResponseHandler() {
+
+                override fun onSuccess(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseString: String?
+                ) {
+
+                    try {
+                        val obj = JSONObject(responseString as String)
+                        val avatar = obj.getString("avatar_url")
+                        val company = obj.getString("company")
+                        val name = obj.getString("name")
+                        val location = obj.getString("location")
+                        val repository = obj.getInt("public_repos")
+                        val userLogin = obj.getString("login")
+
+                        val userInfo = User(avatar, company, location, name, repository, userLogin)
+                        user.postValue(userInfo)
+                    } catch (e: Exception) {
+                        Log.d("Exception", e.message as String)
+                    }
+                }
+
+                override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseString: String?,
+                    throwable: Throwable?
+                ) {
+                    Log.d("onFailure", throwable?.message.toString())
+                }
+            })
+        }
     }
 
     fun getUser(): LiveData<User> {
@@ -64,6 +92,11 @@ class DetailViewModel(repo: Repository) : ViewModel() {
 
     fun insertFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch{
         repo.insertFavUser(favoriteUser)
+    }
+
+    fun deleteFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch {
+        repo.deleteFavUser(favoriteUser)
+        isFavoriteUser.postValue(false)
     }
 
     companion object {

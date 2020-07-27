@@ -5,7 +5,7 @@
         android:icon="@drawable/ic_notification"
         android:key="@string/key_reminder"
         android:singleLine="true"
-        android:title="@string/reminder" />
+        android:title="@string/reminder_at_9" />
 
     <Preference
         android:icon="@drawable/ic_switch_language"

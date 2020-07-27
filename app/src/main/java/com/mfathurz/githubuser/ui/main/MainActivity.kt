@@ -1,10 +1,16 @@
 package com.mfathurz.githubuser.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -33,15 +39,21 @@ class MainActivity : AppCompatActivity() {
         rv_github_user.layoutManager = LinearLayoutManager(this@MainActivity)
         rv_github_user.adapter = recyclerAdapter
 
-        btn_search.setOnClickListener {
-            val username = edt_username.text.toString()
-            if (username.isEmpty()){
-                edt_username.error = getString(R.string.emptyField)
-                return@setOnClickListener
+
+        edt_username.setOnKeyListener { view, keyCode, keyEvent ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER){
+                val username = edt_username.text.toString()
+                if (username.isEmpty()){
+                    edt_username.error = getString(R.string.emptyField)
+                    return@setOnKeyListener true
+                }
+                showLoading(true)
+                mainViewModel.searchUser(username)
+                closeKeyboard()
             }
-            showLoading(true)
-            mainViewModel.searchUser(username)
+                return@setOnKeyListener false
         }
+
 
         mainViewModel.getUsers().observe(this, Observer {query->
             if (query != null){
@@ -59,6 +71,14 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun closeKeyboard() {
+        val view = this.currentFocus
+        view?.let{
+            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken,0)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.action_bar_menu,menu)
         return super.onCreateOptionsMenu(menu)
@@ -71,7 +91,6 @@ class MainActivity : AppCompatActivity() {
                     SettingActivity::class.java)
                 startActivity(mIntent)
             }
-
             R.id.nav_favorite -> {
                 val mIntent = Intent(this,
                     FavoriteUserActivity::class.java)

@@ -10,7 +10,6 @@ import com.mfathurz.githubuser.db.Contract.NAME
 import com.mfathurz.githubuser.db.Contract.REPOSITORY
 import com.mfathurz.githubuser.db.Contract.TABLE_NAME
 import com.mfathurz.githubuser.db.Contract.USERNAME
-import java.io.Serializable
 
 @Entity(tableName = TABLE_NAME)
 data class User(
@@ -27,4 +26,4 @@ data class User(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = USERNAME)
     val username: String
-):Serializable
+)

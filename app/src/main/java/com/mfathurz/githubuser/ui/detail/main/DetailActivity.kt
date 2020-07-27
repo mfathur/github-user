@@ -13,15 +13,16 @@ import com.mfathurz.githubuser.db.FavUserDatabase
 import com.mfathurz.githubuser.model.User
 import com.mfathurz.githubuser.ui.detail.FollowPagerAdapter
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var detailViewModel: DetailViewModel
     private var statusFavorite = false
-    private lateinit var favoriteUser: User
+    private lateinit var userModel: User
+
+    companion object {
+        const val EXTRA_USERNAME = "extra_username"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +30,7 @@ class DetailActivity : AppCompatActivity() {
 
         val repo = Repository(FavUserDatabase.invoke(this).getFavUserDao())
         val viewModelFactory = DetailViewModelFactory(repo)
-        detailViewModel = ViewModelProvider(this,viewModelFactory).get(DetailViewModel::class.java)
+        detailViewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
 
         supportActionBar?.let {
             it.title = getString(R.string.detail_action_bar_title)
@@ -40,18 +41,27 @@ class DetailActivity : AppCompatActivity() {
         showLoading(true)
         viewPagerInit(user)
 
-        detailViewModel.detailUser(user)
+        detailViewModel.detailUser(repo, user)
         detailViewModel.getUser().observe(this, Observer {
-            favoriteUser = it
+            userModel = it
             viewInit(it)
             showLoading(false)
         })
 
-        fab_add_favorite.setOnClickListener {
-            detailViewModel.insertFavUser(repo,favoriteUser)
+        detailViewModel.isFavoriteUser.observe(this, Observer {
+            statusFavorite = it
+            setStatusFavorite(statusFavorite)
+        })
 
+
+        fab_add_favorite.setOnClickListener {
             statusFavorite = !statusFavorite
             setStatusFavorite(statusFavorite)
+
+            if (statusFavorite)
+                detailViewModel.insertFavUser(repo, userModel)
+            else
+                detailViewModel.deleteFavUser(repo, userModel)
         }
     }
 
@@ -90,10 +100,6 @@ class DetailActivity : AppCompatActivity() {
         } else {
             detailProgressBar.visibility = View.GONE
         }
-    }
-
-    companion object {
-        const val EXTRA_USERNAME = "extra_username"
     }
 
     private fun setStatusFavorite(statusFavorite: Boolean) {

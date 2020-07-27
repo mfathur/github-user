@@ -1,21 +1,14 @@
 package com.mfathurz.githubuser.ui.setting
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.mfathurz.githubuser.AlarmReceiver
 import com.mfathurz.githubuser.R
-import com.mfathurz.githubuser.ui.main.MainActivity
 import java.util.*
 
 class PreferenceFragment : PreferenceFragmentCompat(),
@@ -30,10 +23,11 @@ class PreferenceFragment : PreferenceFragmentCompat(),
     private val currentLanguage = Locale.getDefault().displayLanguage
     private var isActive = false
 
+    private lateinit var alarmReceiver: AlarmReceiver
+
     override fun onResume() {
         super.onResume()
         preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-
     }
 
     override fun onPause() {
@@ -48,6 +42,7 @@ class PreferenceFragment : PreferenceFragmentCompat(),
     }
 
     private fun init() {
+        alarmReceiver = AlarmReceiver()
         REMINDER = resources.getString(R.string.key_reminder)
         LANGUAGE = resources.getString(R.string.key_language)
 
@@ -59,13 +54,12 @@ class PreferenceFragment : PreferenceFragmentCompat(),
             startActivity(mIntent)
             return@setOnPreferenceClickListener true
         }
-        sendNotification()
     }
 
     private fun setSummaries() {
         val sh = preferenceManager.sharedPreferences
         languagePreference.summary = sh.getString(LANGUAGE, currentLanguage)
-        reminderPreference.disableDependentsState = sh.getBoolean(REMINDER,false)
+        reminderPreference.disableDependentsState = sh.getBoolean(REMINDER, false)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -74,45 +68,16 @@ class PreferenceFragment : PreferenceFragmentCompat(),
 
         }
 
-        if (key == REMINDER){
-            reminderPreference.disableDependentsState = sharedPreferences.getBoolean(REMINDER,false)
-            isActive = sharedPreferences.getBoolean(REMINDER,false)
-            Toast.makeText(activity,"$isActive",Toast.LENGTH_SHORT).show()
+        if (key == REMINDER) {
+            reminderPreference.disableDependentsState =
+                sharedPreferences.getBoolean(REMINDER, false)
+            isActive = sharedPreferences.getBoolean(REMINDER, false)
+            if (isActive) {
+                alarmReceiver.setRepeatingAlarm(requireContext())
+            } else {
+                alarmReceiver.cancelAlarm(requireContext())
+            }
         }
-    }
-
-    private fun sendNotification(){
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        val pendingIntent = PendingIntent.getActivity(requireContext(), NOTIFICATION_REQUEST_CODE,intent,PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val mNotificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-            .setContentTitle(getString(R.string.reminder))
-            .setContentText(getString(R.string.find_popular_user))
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val notificationChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME,NotificationManager.IMPORTANCE_DEFAULT)
-
-            builder.setChannelId(CHANNEL_ID)
-
-            mNotificationManager.createNotificationChannel(notificationChannel)
-        }
-
-        val notification = builder.build()
-
-        mNotificationManager.notify(NOTIFICATION_ID,notification)
-
-    }
-
-    companion object{
-        private const val CHANNEL_ID = "channel_1"
-        private const val CHANNEL_NAME = "notification_get_user_back"
-        private const val NOTIFICATION_ID = 1
-        private const val NOTIFICATION_REQUEST_CODE = 200
     }
 
 }
