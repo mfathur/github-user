@@ -17,7 +17,7 @@ import com.mfathurz.githubuser.db.FavUserDatabase
 import com.mfathurz.githubuser.model.User
 import com.mfathurz.githubuser.ui.detail.main.DetailActivity
 import com.mfathurz.githubuser.ui.main.MainActivity
-import com.mfathurz.githubuser.util.MappingHelper
+import com.mfathurz.githubuser.helper.MappingHelper
 import kotlinx.android.synthetic.main.activity_favorite_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO

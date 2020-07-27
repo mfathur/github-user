@@ -10,7 +10,7 @@ import com.loopj.android.http.TextHttpResponseHandler
 import com.mfathurz.githubuser.BuildConfig
 import com.mfathurz.githubuser.Repository
 import com.mfathurz.githubuser.model.User
-import com.mfathurz.githubuser.util.MappingHelper
+import com.mfathurz.githubuser.helper.MappingHelper
 import cz.msebera.android.httpclient.Header
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO

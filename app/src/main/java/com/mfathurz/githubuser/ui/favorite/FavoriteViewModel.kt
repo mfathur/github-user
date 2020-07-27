@@ -3,10 +3,9 @@ package com.mfathurz.githubuser.ui.favorite
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.mfathurz.githubuser.Repository
 import com.mfathurz.githubuser.model.User
-import com.mfathurz.githubuser.util.MappingHelper
+import com.mfathurz.githubuser.helper.MappingHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

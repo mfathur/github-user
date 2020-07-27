@@ -1,4 +1,4 @@
-package com.mfathurz.githubuser.util
+package com.mfathurz.githubuser.helper
 
 import android.database.Cursor
 import com.mfathurz.githubuser.db.Contract.AVATAR
