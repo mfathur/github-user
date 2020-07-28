@@ -12,10 +12,10 @@
         android:layout_height="128dp"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/image"
-        android:src="@drawable/ic_image_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_image_placeholder" />
 
     <TextView
         android:id="@+id/txt_name"
@@ -48,11 +48,11 @@
         android:drawableStart="@drawable/ic_repo"
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
-        android:text="@string/repository"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toEndOf="@id/txt_name"
         app:layout_constraintStart_toStartOf="@id/txt_name"
-        app:layout_constraintTop_toBottomOf="@id/txt_username" />
+        app:layout_constraintTop_toBottomOf="@id/txt_username"
+        tools:text="@string/repository" />
 
     <TextView
         android:id="@+id/txt_company"
@@ -63,11 +63,11 @@
         android:drawablePadding="4dp"
         android:drawableTint="@android:color/black"
         android:gravity="center_vertical"
-        android:text="@string/company"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toEndOf="@id/txt_name"
         app:layout_constraintStart_toStartOf="@id/txt_name"
-        app:layout_constraintTop_toBottomOf="@id/txt_repository" />
+        app:layout_constraintTop_toBottomOf="@id/txt_repository"
+        tools:text="@string/company" />
 
     <TextView
         android:id="@+id/txt_location"
@@ -78,11 +78,11 @@
         android:drawablePadding="4dp"
         android:drawableTint="@android:color/black"
         android:gravity="center_vertical"
-        android:text="@string/location"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toEndOf="@id/txt_name"
         app:layout_constraintStart_toStartOf="@id/txt_name"
-        app:layout_constraintTop_toBottomOf="@id/txt_company" />
+        app:layout_constraintTop_toBottomOf="@id/txt_company"
+        tools:text="@string/location" />
 
 
     <com.google.android.material.tabs.TabLayout
@@ -116,12 +116,12 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_favorite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_favorite_border"
-        app:tint="@android:color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

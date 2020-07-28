@@ -20,15 +20,21 @@ class AlarmReceiver : BroadcastReceiver() {
         private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_REQUEST_CODE = 200
         private const val REPEATING_ALARM_REQUEST_CODE = 100
+        private const val REPEATING_ALARM = "repeating_alarm"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        sendNotification(context)
+        if (intent.action != null){
+            if (intent.action == REPEATING_ALARM){
+                sendNotification(context)
+            }
+        }
     }
 
     fun setRepeatingAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.action = REPEATING_ALARM
         val pendingIntent =
             PendingIntent.getBroadcast(context, REPEATING_ALARM_REQUEST_CODE, intent, 0)
 

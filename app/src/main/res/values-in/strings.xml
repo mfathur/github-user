@@ -30,4 +30,7 @@
     <string name="setting">Pengaturan</string>
     <string name="key_reminder">reminder</string>
     <string name="find_popular_user">Cari Pengguna favorit kamu di github yuk!</string>
+    <string name="empty_text">Kosong</string>
+    <string name="appwidget_text">Pengguna Github Favorit</string>
+    <string name="add_widget">Tambah widget</string>
 </resources>

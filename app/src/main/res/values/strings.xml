@@ -29,6 +29,7 @@
     <string name="setting">Setting</string>
     <string name="key_reminder">reminder</string>
     <string name="find_popular_user">Let\'s find popular user on Github</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text">Favorite Github Users</string>
     <string name="add_widget">Add widget</string>
+    <string name="empty_text">Empty</string>
 </resources>

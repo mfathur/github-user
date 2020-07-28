@@ -18,7 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".FavoriteUserGithubWidget">
+
+        <service
+            android:name="com.mfathurz.githubuser.widget.StackWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".widget.FavoriteUserGithubWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -27,6 +32,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/favorite_user_github_widget_info" />
         </receiver>
+
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
@@ -44,7 +50,9 @@
             android:writePermission="com.mfathurz.githubuser.WRITE_DATABASE" />
 
         <activity android:name=".ui.detail.main.DetailActivity" />
-        <activity android:name=".ui.main.MainActivity">
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

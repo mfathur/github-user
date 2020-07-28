@@ -12,18 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mfathurz.githubuser.R
 import com.mfathurz.githubuser.Repository
-import com.mfathurz.githubuser.db.Contract.CONTENT_URI
 import com.mfathurz.githubuser.db.FavUserDatabase
+import com.mfathurz.githubuser.helper.Helpers
 import com.mfathurz.githubuser.model.User
 import com.mfathurz.githubuser.ui.detail.main.DetailActivity
 import com.mfathurz.githubuser.ui.main.MainActivity
-import com.mfathurz.githubuser.helper.MappingHelper
 import kotlinx.android.synthetic.main.activity_favorite_user.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 class FavoriteUserActivity : AppCompatActivity() {
 
@@ -31,6 +25,7 @@ class FavoriteUserActivity : AppCompatActivity() {
     private lateinit var adapter: FavoriteRecyclerAdapter
     private lateinit var repository: Repository
     private var favoriteUserSelected: User? = null
+    private var favUserPosition: Int? = null
 
     companion object {
         private const val ALERT_DIALOG_DELETE_ALL = 1
@@ -57,7 +52,7 @@ class FavoriteUserActivity : AppCompatActivity() {
         favUserRecyclerView.setHasFixedSize(true)
         favUserRecyclerView.layoutManager = LinearLayoutManager(this)
         favUserRecyclerView.adapter = adapter
-
+        showLoading(true)
         favoriteViewModel.getFavoriteData().observe(this, Observer {
             adapter.submitList(it)
             showLoading(false)
@@ -73,8 +68,9 @@ class FavoriteUserActivity : AppCompatActivity() {
 
         adapter.setOnItemLongClickCallback(object :
             FavoriteRecyclerAdapter.OnItemLongClickCallback {
-            override fun onItemLongClicked(favoriteUser: User) {
+            override fun onItemLongClicked(favoriteUser: User,position: Int) {
                 favoriteUserSelected = favoriteUser
+                favUserPosition = position
                 showAlertDialog(ALERT_DIALOG_DELETE)
             }
         })
@@ -96,21 +92,6 @@ class FavoriteUserActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadFavoriteAsync() {
-        CoroutineScope(Main).launch {
-            showLoading(true)
-
-            val deferredFavorite = async(IO) {
-                val cursor = contentResolver?.query(CONTENT_URI, null, null, null, null)
-                MappingHelper.mapCursorToList(cursor)
-            }
-
-            val notes = deferredFavorite.await()
-            adapter.submitList(notes)
-            showLoading(false)
-        }
-    }
-
     private fun showAlertDialog(type: Int) {
         val isDeleteAll = type == ALERT_DIALOG_DELETE_ALL
 
@@ -125,10 +106,13 @@ class FavoriteUserActivity : AppCompatActivity() {
         dialog.setMessage(message)
         dialog.setPositiveButton(getString(R.string.yes)) { _, _ ->
             if (isDeleteAll) {
-                favoriteViewModel.deleteAllFavUser(repository)
+                favoriteViewModel.deleteAllFavUser()
+                Helpers.updateWidget(this)
             } else {
-                favoriteViewModel.deleteFavUser(repository, favoriteUserSelected!!)
-                favoriteViewModel.refreshData(repository)
+                favoriteViewModel.deleteFavUser(favoriteUserSelected!!)
+                favoriteViewModel.refreshData()
+                adapter.notifyItemRemoved(favUserPosition as Int)
+                Helpers.updateWidget(this)
             }
 
         }

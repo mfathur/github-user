@@ -4,38 +4,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mfathurz.githubuser.Repository
+import com.mfathurz.githubuser.helper.Helpers
 import com.mfathurz.githubuser.model.User
-import com.mfathurz.githubuser.helper.MappingHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
-class FavoriteViewModel(repo: Repository) : ViewModel() {
+class FavoriteViewModel(private val repo: Repository) : ViewModel() {
 
     private val favoriteUsers = MutableLiveData<List<User>>()
 
     init {
         favoriteUsers.value = emptyList()
-        getAllFavUsers(repo)
+        getAllFavUsers()
     }
 
-    private fun getAllFavUsers(repo: Repository) = CoroutineScope(IO).launch {
+    private fun getAllFavUsers() = CoroutineScope(IO).launch {
         val cursor = repo.getAllFavoriteUser()
-        val list = MappingHelper.mapCursorToList(cursor)
+        val list = Helpers.mapCursorToList(cursor)
         favoriteUsers.postValue(list)
     }
 
     fun getFavoriteData():LiveData<List<User>> = favoriteUsers
 
-    fun refreshData(repo: Repository){
-        getAllFavUsers(repo)
+    fun refreshData(){
+        getAllFavUsers()
     }
 
-    fun deleteFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch {
+    fun deleteFavUser(favoriteUser: User) = CoroutineScope(IO).launch {
         repo.deleteFavUser(favoriteUser)
     }
 
-    fun deleteAllFavUser(repo: Repository) {
+    fun deleteAllFavUser() {
         CoroutineScope(IO).launch {
             repo.deleteAllFavUser()
         }

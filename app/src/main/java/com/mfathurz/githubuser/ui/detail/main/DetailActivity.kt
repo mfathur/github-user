@@ -10,6 +10,7 @@ import coil.transform.CircleCropTransformation
 import com.mfathurz.githubuser.R
 import com.mfathurz.githubuser.Repository
 import com.mfathurz.githubuser.db.FavUserDatabase
+import com.mfathurz.githubuser.helper.Helpers
 import com.mfathurz.githubuser.model.User
 import com.mfathurz.githubuser.ui.detail.FollowPagerAdapter
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -41,7 +42,7 @@ class DetailActivity : AppCompatActivity() {
         showLoading(true)
         viewPagerInit(user)
 
-        detailViewModel.detailUser(repo, user)
+        detailViewModel.detailUser(user)
         detailViewModel.getUser().observe(this, Observer {
             userModel = it
             viewInit(it)
@@ -58,10 +59,12 @@ class DetailActivity : AppCompatActivity() {
             statusFavorite = !statusFavorite
             setStatusFavorite(statusFavorite)
 
-            if (statusFavorite)
-                detailViewModel.insertFavUser(repo, userModel)
-            else
-                detailViewModel.deleteFavUser(repo, userModel)
+            if (statusFavorite) {
+                detailViewModel.insertFavUser(userModel)
+            } else {
+                detailViewModel.deleteFavUser(userModel)
+            }
+            Helpers.updateWidget(this)
         }
     }
 

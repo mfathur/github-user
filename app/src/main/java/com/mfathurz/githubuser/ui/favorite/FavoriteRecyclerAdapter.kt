@@ -16,7 +16,7 @@ class FavoriteRecyclerAdapter :
     ListAdapter<User, FavoriteRecyclerAdapter.FavoriteViewHolder>(FavoriteDiffCallback()) {
 
     inner class FavoriteViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(favUser: User) {
+        fun bind(favUser: User,position: Int) {
             with(view) {
                 item_txt_name.text = favUser.username
 
@@ -31,7 +31,7 @@ class FavoriteRecyclerAdapter :
                 }
 
                 setOnLongClickListener {
-                    onItemLongClickCallback.onItemLongClicked(favUser)
+                    onItemLongClickCallback.onItemLongClicked(favUser,position)
                     return@setOnLongClickListener true
                 }
             }
@@ -45,7 +45,7 @@ class FavoriteRecyclerAdapter :
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) =
-        holder.bind(getItem(position))
+        holder.bind(getItem(position),position)
 
     private lateinit var onItemClickCallback: OnItemClickCallback
 
@@ -60,7 +60,7 @@ class FavoriteRecyclerAdapter :
     private lateinit var onItemLongClickCallback: OnItemLongClickCallback
 
     interface OnItemLongClickCallback {
-        fun onItemLongClicked(favoriteUser: User)
+        fun onItemLongClicked(favoriteUser: User,position: Int)
     }
 
     fun setOnItemLongClickCallback(onItemLongClickCallback: OnItemLongClickCallback) {

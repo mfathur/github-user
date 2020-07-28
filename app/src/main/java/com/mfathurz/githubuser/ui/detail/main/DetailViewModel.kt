@@ -9,8 +9,8 @@ import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.TextHttpResponseHandler
 import com.mfathurz.githubuser.BuildConfig
 import com.mfathurz.githubuser.Repository
+import com.mfathurz.githubuser.helper.Helpers
 import com.mfathurz.githubuser.model.User
-import com.mfathurz.githubuser.helper.MappingHelper
 import cz.msebera.android.httpclient.Header
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -18,7 +18,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class DetailViewModel(repo: Repository) : ViewModel() {
+class DetailViewModel(private val repo: Repository) : ViewModel() {
 
     val user = MutableLiveData<User>()
     val isFavoriteUser = MutableLiveData<Boolean>()
@@ -28,7 +28,7 @@ class DetailViewModel(repo: Repository) : ViewModel() {
         viewModelScope.launch {
             val deferredFavorite = CoroutineScope(IO).async {
                 val cursor = repo.getAllFavoriteUser()
-                MappingHelper.mapCursorToList(cursor)
+                Helpers.mapCursorToList(cursor)
             }
             val favoriteUsers = deferredFavorite.await()
 
@@ -44,7 +44,7 @@ class DetailViewModel(repo: Repository) : ViewModel() {
         return isFavorite
     }
 
-    fun detailUser(repo: Repository,username: String) {
+    fun detailUser(username: String) {
         if (!checkIfFavoriteUser(repo,username)){
             val url = DETAIL_USER_URL + username
             val client = AsyncHttpClient()
@@ -90,11 +90,11 @@ class DetailViewModel(repo: Repository) : ViewModel() {
         return user
     }
 
-    fun insertFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch{
+    fun insertFavUser( favoriteUser: User) = CoroutineScope(IO).launch{
         repo.insertFavUser(favoriteUser)
     }
 
-    fun deleteFavUser(repo: Repository, favoriteUser: User) = CoroutineScope(IO).launch {
+    fun deleteFavUser( favoriteUser: User) = CoroutineScope(IO).launch {
         repo.deleteFavUser(favoriteUser)
         isFavoriteUser.postValue(false)
     }
